@@ -1,4 +1,4 @@
-import { useDeferredValue, useEffect, useState } from "react";
+import { Profiler, useDeferredValue, useEffect, useState } from "react";
 import { fetchUsers } from "./data/usersSlice";
 import { useAppDispatch, useAppSelector } from "./store";
 
@@ -18,6 +18,10 @@ function App() {
     dispatch(fetchUsers(parsedPageNumber));
   }, [deferredPageNumber]);
 
+  function logPerf(...args: any[]) {
+    console.log(args);
+  }
+
   return (
     <div className="App">
       It will display list of all users
@@ -29,14 +33,18 @@ function App() {
       <br />
       Status : {status}
       <br />
-      <section className="users">
-        {users.map((user) => (
-          <div>
-            <h1>{user.first_name}</h1>
-            <h2>{user.last_name}</h2>
-          </div>
-        ))}
-      </section>
+      {users && users.length > 0 && (
+        <Profiler id="userslist" onRender={logPerf}>
+          <section className="users">
+            {users.map((user) => (
+              <div>
+                <h1>{user.first_name}</h1>
+                <h2>{user.last_name}</h2>
+              </div>
+            ))}
+          </section>
+        </Profiler>
+      )}
     </div>
   );
 }
